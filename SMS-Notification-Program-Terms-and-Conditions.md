@@ -46,7 +46,7 @@ You may also contact EnXchange directly:
 
 **Email:** support@enxenergy.com  
 **Phone:** 405-783-3473  
-Support hours: 9:00 AM – 5:00 PM ET, Monday through Friday, excluding EnXchange-observed holidays. Outside of support hours, you may leave a message at the phone number above.
+Support hours: 9:00 AM – 5:00 PM CT, Monday through Friday, excluding EnXchange-observed holidays. Outside of support hours, you may leave a message at the phone number above.
 
 ---
 
