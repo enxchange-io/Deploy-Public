@@ -1,5 +1,5 @@
 Privacy Policy
-Effective Date: May 12, 2026
+Effective Date: Feb 12, 2026
 Last Updated: May 12, 2026
 Published by: Global Innovation Platform, LLC d/b/a EnXchange
 400 W Virginia St, McKinney, TX 75069
