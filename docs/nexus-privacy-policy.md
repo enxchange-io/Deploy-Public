@@ -1,9 +1,9 @@
 # Privacy Policy
 
-**Effective Date:** March 1, 2026  
+**Effective Date:** May 12, 2026  
 **Last Updated:** May 12, 2026  
 **Published by:** Global Innovation Platform, LLC d/b/a EnXchange  
-400 W Virginia St, McKinney, TX 75069
+2510 S. Church St., Paris, TX 75460
 
 ---
 
@@ -94,7 +94,7 @@ We may update this Privacy Policy from time to time. We will update the "Last Up
 For questions about this Privacy Policy or our data practices, contact:
 
 **Global Innovation Platform, LLC d/b/a EnXchange**  
-400 W Virginia St  
-McKinney, TX 75069  
+2510 S. Church St.  
+Paris, TX 75460  
 support@enxenergy.com  
 405-783-3473
