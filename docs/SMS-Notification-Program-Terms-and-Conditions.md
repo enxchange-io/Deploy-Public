@@ -1,9 +1,9 @@
 # SMS Notification Program — Terms and Conditions
 
-**Effective Date:** Feb 12, 2026  
+**Effective Date:** May 12, 2026  
 **Last Updated:** May 12, 2026  
 **Published by:** Global Innovation Platform, LLC d/b/a EnXchange  
-400 W Virginia St, McKinney, TX 75069
+2510 S. Church St., Paris, TX 75460
 
 ---
 
@@ -46,7 +46,7 @@ You may also contact EnXchange directly:
 
 **Email:** support@enxenergy.com  
 **Phone:** 405-783-3473  
-Support hours: 9:00 AM – 5:00 PM CT, Monday through Friday, excluding EnXchange-observed holidays. Outside of support hours, you may leave a message at the phone number above.
+Support hours: 9:00 AM – 5:00 PM ET, Monday through Friday, excluding EnXchange-observed holidays. Outside of support hours, you may leave a message at the phone number above.
 
 ---
 
@@ -58,7 +58,7 @@ This program is supported on all major US wireless carriers. EnXchange and your 
 
 ## Privacy
 
-Your phone number and message delivery information are handled in accordance with the [EnXchange Privacy Policy](./nexus-privacy-policy.md). We do not sell your information or use it for advertising purposes.
+Your phone number and message delivery information are handled in accordance with the [EnXchange Privacy Policy](https://github.com/enxchange-io/Deploy-Public/blob/7f2be6891cc5ff991e6113a0350f85897873a17f/nexus-privacy-policy.md). We do not sell your information or use it for advertising purposes.
 
 ---
 
@@ -71,7 +71,7 @@ EnXchange may update these Terms and Conditions from time to time. We will updat
 ## Contact
 
 **Global Innovation Platform, LLC d/b/a EnXchange**  
-400 W Virginia St  
-McKinney, TX 75069  
+2510 S. Church St.  
+Paris, TX 75460  
 support@enxenergy.com  
 405-783-3473
