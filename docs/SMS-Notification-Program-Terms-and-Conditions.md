@@ -1,7 +1,7 @@
 # SMS Notification Program — Terms and Conditions
 
 **Effective Date:** May 12, 2026  
-**Last Updated:** May 12, 2026  
+**Last Updated:** June 1, 2026  
 **Published by:** Global Innovation Platform, LLC d/b/a EnXchange  
 2510 S. Church St., Paris, TX 75460
 
