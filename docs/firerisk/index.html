@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fire Risk by Month</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f1117;
+    --bg2: #1a1d27;
+    --bg3: #22263a;
+    --border: #2e3248;
+    --text: #e2e4ef;
+    --text2: #8b90a8;
+    --blue: #378ADD;
+    --radius: 8px;
+    --font: 'DM Sans', system-ui, sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono&display=swap');
+
+  .card {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    width: 100%;
+    max-width: 960px;
+  }
+
+  h1 {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text2);
+    margin-bottom: 12px;
+  }
+
+  .controls {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    align-items: center;
+  }
+
+  select {
+    padding: 6px 10px;
+    font-size: 13px;
+    font-family: 'DM Mono', monospace;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg3);
+    color: var(--text);
+    outline: none;
+  }
+
+  .stat-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: nowrap;
+  }
+
+  .stat {
+    background: var(--bg3);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 12px;
+    font-size: 11px;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    flex: 1;
+  }
+
+  .stat span {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    margin-top: 2px;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .chart-wrap {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    margin-bottom: 16px;
+  }
+
+  canvas { border-radius: var(--radius); }
+
+  .legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--text2);
+  }
+
+  .legend span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .leg-line {
+    display: inline-block;
+    width: 20px;
+    height: 2px;
+    vertical-align: middle;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1 id="title">Fire Risk by Month</h1>
+  <div class="controls">
+    <select id="customer" onchange="loadCustomer()"></select>
+    <select id="month" onchange="loadMonth()">
+      <option value="0">January</option>
+      <option value="1">February</option>
+      <option value="2">March</option>
+      <option value="3">April</option>
+      <option value="4">May</option>
+      <option value="5">June</option>
+      <option value="6">July</option>
+      <option value="7">August</option>
+      <option value="8">September</option>
+      <option value="9">October</option>
+      <option value="10">November</option>
+      <option value="11">December</option>
+    </select>
+  </div>
+
+  <div class="stat-row" id="stats"></div>
+
+  <div class="chart-wrap">
+    <canvas id="chart"></canvas>
+  </div>
+
+  <div class="legend">
+    <span><span class="leg-line" style="background:#378ADD;"></span>Distribution</span>
+    <span><span class="leg-line" style="background:rgba(210,80,80,0.85);"></span>Mean</span>
+    <span><span class="leg-line" style="background:rgba(80,180,80,0.8);border-top:2px dashed rgba(80,180,80,0.8);height:0;"></span>±1σ</span>
+    <span><span class="leg-line" style="background:rgba(200,150,0,0.8);border-top:2px dashed rgba(200,150,0,0.8);height:0;"></span>±2σ</span>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.0.1/chartjs-plugin-annotation.min.js"></script>
+<script src="customers.js"></script>
+<script>
+let monthData = [];
+
+function loadCustomer() {
+  const name = document.getElementById('customer').value;
+  const customer = customers.find(c => c.name === name);
+  if (!customer) { return; }
+
+  monthData = customer.months;
+  document.getElementById('title').textContent = name + ' Fire Risk by Month';
+  document.title = name + ' Fire Risk by Month';
+  loadMonth();
+}
+
+function loadMonth() {
+  const i = parseInt(document.getElementById('month').value);
+  const d = monthData.find(m => m.month === i);
+  if (!d) { return; }
+  update(d.mean, d.sd, d.skew, d.kurt, d.min, d.max, d);
+}
+
+function initCustomerDropdown() {
+  const sel = document.getElementById('customer');
+  customers.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.name;
+    opt.textContent = c.name;
+    sel.appendChild(opt);
+  });
+  loadCustomer();
+}
+
+const textColor = '#8b90a8';
+
+function normalPDF(x, mu, sigma) {
+  const z = (x - mu) / sigma;
+  return Math.exp(-0.5 * z * z) / (sigma * Math.sqrt(2 * Math.PI));
+}
+function hermite3(z) { return z*z*z - 3*z; }
+function hermite4(z) { return z*z*z*z - 6*z*z + 3; }
+function gramCharlierPDF(x, mu, sigma, skew, exKurt) {
+  const z = (x - mu) / sigma;
+  return Math.max(0, normalPDF(x, mu, sigma) * (1 + (skew/6)*hermite3(z) + (exKurt/24)*hermite4(z)));
+}
+function getPercentile(pts, p) {
+  let total = 0;
+  for (let i = 1; i < pts.length; i++) { total += (pts[i].y + pts[i-1].y) * (pts[i].x - pts[i-1].x) / 2; }
+  let cum = 0;
+  for (let i = 1; i < pts.length; i++) {
+    cum += (pts[i].y + pts[i-1].y) * (pts[i].x - pts[i-1].x) / 2;
+    if (total > 0 && cum / total >= p) { return pts[i].x.toFixed(1); }
+  }
+  return pts[pts.length-1].x.toFixed(1);
+}
+
+const sdDefs = [
+  { offset:0,  color:'rgba(210,80,80,0.85)',  dash:[] },
+  { offset:1,  color:'rgba(80,180,80,0.8)',   dash:[4,3] },
+  { offset:-1, color:'rgba(80,180,80,0.8)',   dash:[4,3] },
+  { offset:2,  color:'rgba(200,150,0,0.8)',   dash:[4,3] },
+  { offset:-2, color:'rgba(200,150,0,0.8)',   dash:[4,3] },
+];
+
+const ctx = document.getElementById('chart').getContext('2d');
+const chart = new Chart(ctx, {
+  type: 'line',
+  data: { datasets: [{ data: [], borderColor: '#378ADD', backgroundColor: 'rgba(55,138,221,0.10)', fill: true, pointRadius: 0, borderWidth: 2, tension: 0.4 }] },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: false,
+    parsing: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: c => 'density: ' + c.parsed.y.toFixed(4) } },
+      annotation: { annotations: {} }
+    },
+    scales: {
+      x: {
+        type: 'linear',
+        min: 0, max: 100,
+        ticks: {
+          color: textColor,
+          maxRotation: 0,
+          callback: (val) => val % 10 === 0 ? val : ''
+        },
+        grid: { display: false }
+      },
+      y: { ticks: { display: false }, grid: { display: false }, min: 0 }
+    }
+  }
+});
+
+function update(mu, sigma, skew, kurt, xmin, xmax, d) {
+  const pts = [];
+  for (let i = 0; i <= 200; i++) {
+    const x = xmin + (xmax - xmin) * i / 200;
+    pts.push({ x, y: gramCharlierPDF(x, mu, sigma, skew, kurt) });
+  }
+
+  chart.data.datasets[0].data = pts;
+  chart.options.scales.x.min = xmin;
+  chart.options.scales.x.max = 100;
+
+  const annotations = {};
+  sdDefs.forEach((sd, i) => {
+    const xVal = mu + sd.offset * sigma;
+    if (xVal < xmin || xVal > xmax) { return; }
+    annotations['sd' + i] = { type: 'line', scaleID: 'x', value: xVal, borderColor: sd.color, borderWidth: 1.5, borderDash: sd.dash };
+  });
+
+  chart.options.plugins.annotation.annotations = annotations;
+  chart.update();
+
+  const p50 = getPercentile(pts, 0.50);
+  const p90 = getPercentile(pts, 0.90);
+
+  document.getElementById('stats').innerHTML =
+    `<div class="stat">Med<span>${p50}</span></div>` +
+    `<div class="stat">90%<span>${p90}</span></div>` +
+    `<div class="stat">Mean<span>${mu.toFixed(1)}</span></div>` +
+    `<div class="stat">Std<span>${sigma.toFixed(1)}</span></div>` +
+    `<div class="stat">Min<span>${xmin.toFixed(0)}</span></div>` +
+    `<div class="stat">Max<span>${xmax.toFixed(0)}</span></div>` +
+    `<div class="stat">Fires<span>${d.fires !== undefined ? d.fires.toFixed(2) : 'N/A'}</span></div>` +
+    `<div class="stat">Area<span>${d.area !== undefined ? d.area.toLocaleString() : 'N/A'}</span></div>`;
+}
+
+document.addEventListener('keydown', e => {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') { return; }
+    e.preventDefault();
+    const sel = document.getElementById('month');
+    if (e.key === 'ArrowRight') {
+        sel.selectedIndex = Math.min(sel.selectedIndex + 1, 11);
+    } else {
+        sel.selectedIndex = Math.max(sel.selectedIndex - 1, 0);
+    }
+    loadMonth();
+});
+
+initCustomerDropdown();
+</script>
+</body>
+</html>
