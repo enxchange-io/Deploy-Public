@@ -322,7 +322,7 @@ const customers = [
     ]
   },
   {
-    "name": "Inland Power and Light",
+    "name": "IPL",
     "months": [
       {
         "month": 0,
